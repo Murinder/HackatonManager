@@ -75,7 +75,7 @@ public class TeamController {
         }
     }
 
-    @PostMapping("/{teamId}/transferCaptaincy/{newLeaderId}")
+    @PostMapping("/{teamId}/transferLeadership/{newLeaderId}")
     public void transferCaptaincy(@PathVariable Long teamId, @PathVariable Long newLeaderId) {
         try {
             teamService.transferLeader(teamId, newLeaderId);
