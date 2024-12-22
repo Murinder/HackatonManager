@@ -44,6 +44,12 @@ public class UserService {
         userInfoRepository.save(userInfo);
     }
 
+    public boolean authenticate(String email, String password) {
+        return userRepository.findByEmail(email)
+                .map(user -> password.equals(user.getPassword()))
+                .orElse(false);
+    }
+
     private boolean isValidPosition(String position) {
         return switch (position.toUpperCase()) {
             case "BACKEND", "FRONTEND", "ML", "ANALYST", "DEVOPS", "DESIGNER", "SUPPORT", "FULLSTACK" -> true;

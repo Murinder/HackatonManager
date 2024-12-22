@@ -1,14 +1,12 @@
 package com.example.kotllegacy.controller;
 
+import com.example.kotllegacy.model.dto.LoginRequest;
 import com.example.kotllegacy.model.dto.UserRegistrationDto;
 import com.example.kotllegacy.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Marker;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/users")
@@ -26,6 +24,16 @@ public class UserController {
         } catch (Exception ex) {
             log.error("Ошибка при регистрации:", ex);
             return "Registration Failed";
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        boolean isAuthenticated = userService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
+        if (isAuthenticated) {
+            return ResponseEntity.ok("success");
+        } else {
+            return ResponseEntity.status(401).body("failure");
         }
     }
 }
