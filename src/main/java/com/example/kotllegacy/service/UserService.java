@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -40,6 +42,7 @@ public class UserService {
                 .resumeLink(dto.getResumeLink())
                 .position(UserInfo.Position.valueOf(dto.getPosition()))
                 .hasTeam(dto.isHasTeam())
+                .createdAt(LocalDateTime.now())
                 .build();
         userInfoRepository.save(userInfo);
     }
