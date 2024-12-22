@@ -5,47 +5,42 @@ import com.example.kotllegacy.model.entity.User;
 import com.example.kotllegacy.model.entity.UserInfo;
 import com.example.kotllegacy.repository.UserInfoRepository;
 import com.example.kotllegacy.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.security.crypto.password.PasswordEncoder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private UserInfoRepository userInfoRepository;
-//    private PasswordEncoder passwordEncoder;
-
+    private final UserRepository userRepository;
+    private final UserInfoRepository userInfoRepository;
 
     @Transactional
-    public void registerUser(UserRegistrationDto dto) {
-        // Validate position
+    public void registrateUser(UserRegistrationDto dto) {
         if (!isValidPosition(dto.getPosition())) {
             throw new IllegalArgumentException("Invalid position specified.");
         }
 
-        // Create and save User entity
-        User user = new User();
-        user.setEmail(dto.getEmail());
-        user.setNickname(dto.getNickname());
-//        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setPassword(dto.getPassword());
-        user.setRole(User.Role.USER);
+        User user = User.builder()
+                .email(dto.getEmail())
+                .nickname(dto.getNickname())
+                .password(dto.getPassword())
+                .role(User.Role.USER)
+                .build();
+
         User savedUser = userRepository.save(user);
 
-        // Create and save UserInfo entity
-        UserInfo userInfo = new UserInfo();
-        userInfo.setUser(savedUser);
-        userInfo.setFullName(dto.getFullName());
-        userInfo.setBirthDate(dto.getBirthDate());
-        userInfo.setDescription(dto.getDescription());
-        userInfo.setTelegramId(dto.getTelegramLink());
-        userInfo.setResumeLink(dto.getResumeLink());
-        userInfo.setPosition(UserInfo.Position.valueOf(dto.getPosition()));
-        userInfo.setHasTeam(dto.isHasTeam());
+        UserInfo userInfo = UserInfo.builder()
+                .user(savedUser)
+                .fullName(dto.getFullName())
+                .birthDate(dto.getBirthDate())
+                .description(dto.getDescription())
+                .telegramId(dto.getTelegramLink())
+                .resumeLink(dto.getResumeLink())
+                .position(UserInfo.Position.valueOf(dto.getPosition()))
+                .hasTeam(dto.isHasTeam())
+                .build();
         userInfoRepository.save(userInfo);
     }
 
