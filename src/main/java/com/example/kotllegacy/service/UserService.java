@@ -42,7 +42,6 @@ public class UserService {
         userInfo.setFullName(dto.getFullName());
         userInfo.setBirthDate(dto.getBirthDate());
         userInfo.setDescription(dto.getDescription());
-        userInfo.setEmail(dto.getEmail());
         userInfo.setTelegramId(dto.getTelegramLink());
         userInfo.setResumeLink(dto.getResumeLink());
         userInfo.setPosition(UserInfo.Position.valueOf(dto.getPosition()));

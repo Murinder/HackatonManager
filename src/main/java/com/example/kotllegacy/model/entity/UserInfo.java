@@ -18,11 +18,12 @@ import java.time.LocalDateTime;
 public class UserInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_info_id")
+    @Column(name = "user_id")
     private Long userId;
 
     @OneToOne
     @MapsId
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(name = "full_name")
@@ -32,9 +33,6 @@ public class UserInfo {
     private LocalDate birthDate;
 
     private String description;
-
-    @Column(name = "email", columnDefinition = "jsonb")
-    private String email;
 
     @Column(name = "telegram_id")
     private String telegramId;

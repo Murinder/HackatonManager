@@ -1,0 +1,94 @@
+--Таблица users
+CREATE TABLE users (
+    user_id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    nickname VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(20) CHECK (role IN ('ADMIN', 'USER')) NOT NULL
+);
+
+--Таблица users_info
+CREATE TABLE users_info (
+    user_id BIGSERIAL PRIMARY KEY REFERENCES users(user_id) ON DELETE CASCADE,
+    full_name VARCHAR(255),
+    birth_date DATE NOT NULL,
+    description TEXT,
+    telegram_id VARCHAR(255),
+    resume_link VARCHAR(255),
+    position VARCHAR(50) CHECK (position IN (
+        'BACKEND', 'FRONTEND', 'ML', 'ANALYST', 'DEVOPS',
+        'DESIGNER', 'SUPPORT', 'FULLSTACK'
+    )),
+    has_team BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+--Таблица skills (навыки)
+CREATE TABLE skills (
+    skill_id BIGSERIAL PRIMARY KEY,
+    skill_name VARCHAR(100) UNIQUE NOT NULL
+);
+
+--Таблица user_skills (связь пользователей с навыками)
+CREATE TABLE user_skills (
+    user_id BIGSERIAL REFERENCES users(user_id) ON DELETE CASCADE,
+    skill_id BIGSERIAL REFERENCES skills(skill_id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, skill_id)
+);
+
+--Таблица hackatons
+CREATE TABLE hackatons (
+    hackaton_id BIGSERIAL PRIMARY KEY,
+    tags JSONB DEFAULT '[]'::JSONB,
+    type_code BIGINT NOT NULL,
+    type_description VARCHAR(100) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    address VARCHAR(255),
+    start_date TIMESTAMP NOT NULL,
+    registration_deadline TIMESTAMP,
+    end_date TIMESTAMP NOT NULL,
+    url VARCHAR(255)
+);
+
+--Таблица teams
+CREATE TABLE teams (
+    team_id BIGSERIAL PRIMARY KEY,
+    team_name VARCHAR(255) UNIQUE NOT NULL,
+    leader_id BIGSERIAL NOT NULL REFERENCES users(user_id) ON DELETE SET NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+--Таблица team_members
+CREATE TABLE team_members (
+    team_id BIGSERIAL REFERENCES teams(team_id) ON DELETE CASCADE,
+    user_id BIGSERIAL REFERENCES users(user_id) ON DELETE CASCADE,
+    is_leader BOOLEAN DEFAULT FALSE,
+    PRIMARY KEY (team_id, user_id),
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+--Таблица team_hackatons (участие команды в хакатоне)
+CREATE TABLE team_hackatons (
+    team_id BIGSERIAL REFERENCES teams(team_id) ON DELETE CASCADE,
+    hackaton_id BIGSERIAL REFERENCES hackatons(id) ON DELETE CASCADE,
+    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (team_id, hackaton_id)
+);
+
+--Таблица join_requests (запросы на вступление в команду)
+CREATE TABLE join_requests (
+    request_id BIGSERIAL PRIMARY KEY,
+    team_id BIGSERIAL REFERENCES teams(team_id) ON DELETE CASCADE,
+    user_id BIGSERIAL REFERENCES users(user_id) ON DELETE CASCADE,
+    status VARCHAR(20) CHECK (status IN ('PENDING', 'APPROVED', 'REJECTED')) DEFAULT 'PENDING',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+--Таблица hackaton_calendar (календарь хакатонов для пользователя)
+CREATE TABLE hackaton_calendar (
+    user_id BIGSERIAL REFERENCES users(user_id) ON DELETE CASCADE,
+    hackaton_id BIGSERIAL REFERENCES hackatons(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, hackaton_id)
+);

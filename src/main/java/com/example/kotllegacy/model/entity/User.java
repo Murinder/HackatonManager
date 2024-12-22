@@ -32,6 +32,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserInfo userInfo;
+
     public enum Role {
         ADMIN,
         USER
