@@ -1,6 +1,7 @@
 package com.example.kotllegacy.controller;
 
 import com.example.kotllegacy.model.dto.LoginRequest;
+import com.example.kotllegacy.model.dto.UpdateUserInfoDto;
 import com.example.kotllegacy.model.dto.UserRegistrationDto;
 import com.example.kotllegacy.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,17 @@ public class UserController {
             return ResponseEntity.ok("success");
         } else {
             return ResponseEntity.status(401).body("failure");
+        }
+    }
+
+    @PutMapping("/{userId}/info")
+    public ResponseEntity<?> updateUserInfo(@PathVariable Long userId, @RequestBody UpdateUserInfoDto updateDto) {
+        try {
+            userService.updateUserInfo(userId, updateDto);
+            return ResponseEntity.ok("Информация пользователя успешно обновлена!");
+        } catch (Exception ex) {
+            log.error("Ошибка при обновлении информации пользователя:", ex);
+            return ResponseEntity.status(500).body("Не удалось обновить информацию пользователя.");
         }
     }
 }
